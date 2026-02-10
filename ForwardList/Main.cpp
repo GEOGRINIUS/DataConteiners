@@ -52,12 +52,27 @@ public:
 		while (size--)push_front(0);
 		cout << "1argLConstructor:\t" << this << endl;
 	}
+	ForwardList(const ForwardList& other) :ForwardList()
+	{
+		for (Element* Temp = other.Head; Temp; Temp = Temp->pNext)
+			push_back(Temp->Data);
+		cout << "LCopyConstructor:\t" << this << endl;
+	}
 	~ForwardList()
 	{
+		while (Head)pop_front();
 		cout << "LDestructor:\t" << this << endl;
 	}
 
 //				Operators:
+	ForwardList& operator=(const ForwardList& other)
+	{
+		if (this == &other)return *this;
+		while (Head)pop_front();
+		for (Element* Temp = other.Head; Temp; Temp = Temp->pNext)
+			push_back(Temp->Data);
+		return *this;
+	}
 	int& operator[](int Index)
 	{
 		Element* Temp = Head;
@@ -69,11 +84,14 @@ public:
 	void push_front(int Data)
 	{
 		//1) создаем добавляемый элемент:
-		Element* New = new Element(Data);
+		//Element* New = new Element(Data);
 		//2) Пристыковаем Новый элемент к началу списка:
-		New->pNext = Head;
+		//New->pNext = Head;
 		//3) Смещаем Голову на Новый элемент:
-		Head = New;
+		//Head = New;
+
+		Head = new Element(Data, Head);
+
 		size++;
 	}
 	void push_back(int Data)
@@ -81,12 +99,12 @@ public:
 		if (Head == nullptr)return push_front(Data);
 
 		//1) Создаем новый элемент:
-		Element* New = new Element(Data);
+		//Element* New = new Element(Data);
 		//2) Доходим до конца списка:
 		Element* Temp = Head;
 		while (Temp->pNext)Temp = Temp->pNext;
 		//3) Добавляем элемент в конец списка:
-		Temp->pNext = New;
+		Temp->pNext = new Element(Data);
 		size++;
 	}
 
@@ -95,7 +113,7 @@ public:
 		if (Index == 0) return push_front(Data);
 
 		//1) Создаем новый элемент:
-		Element* New = new Element(Data);
+		//Element* New = new Element(Data);
 		//2) Доходим до нужного элемента:
 		Element* Temp = Head;
 		for (int i = 0; i < Index - 1; i++)
@@ -104,8 +122,10 @@ public:
 			Temp = Temp->pNext;
 		}
 		//3,4) Добавляем элемент в список:
-		New->pNext = Temp->pNext; //3
-		Temp->pNext = New;		  //4
+		//New->pNext = Temp->pNext; //3
+		//Temp->pNext = New;		//4
+		Temp->pNext = new Element(Data, Temp->pNext);
+
 		size++;
 	}
 
@@ -135,30 +155,38 @@ public:
 
 	void erase(int Data, int Index)
 	{
-		if (Index == 0) return push_front(Data);
-
+		if (Index == 0) return pop_front();
+		Element* buffer;
+		Element* Temp = Head;
+		for (int i = 0; i < Index - 1; i++)Temp->pNext;
+		buffer = Temp->pNext->pNext;
+		delete Temp->pNext;
+		Temp->pNext = buffer;
 		size--;
 	}
 
 	//			Methods:
 	void print()const
 	{
-		Element* Temp = Head;	//Temp - это Итератор.
-		while (Temp)
-		{
+		//Element* Temp = Head;	//Temp - это Итератор.
+		//while (Temp)
+		//{
+		//	cout << Temp << tab << Temp->Data << tab << Temp->pNext << endl;
+		//	Temp = Temp->pNext; //Переход на следующий элемент.
+		//}
+
+		for (Element* Temp = Head; Temp; Temp = Temp->pNext)
 			cout << Temp << tab << Temp->Data << tab << Temp->pNext << endl;
-			Temp = Temp->pNext; //Переход на следующий элемент.
-		}
 		cout << "Количество элементов списка: " << size << endl;
 		cout << "Общее количество элементов: " << Element::count << endl;
 		//cout << "Количество элементов списка: " << Head->count << endl;
 	}
 };
 
-//#define BASE_CHECK
+#define BASE_CHECK
 //#define SIZE_CHECK
-#define HOME_WORK_1
-
+//#define HOME_WORK_1
+//#define ACTUAL_WORK
 
 void main()
 {
@@ -183,6 +211,9 @@ void main()
 	cout << "Введите индекс добавляемого элемента: "; cin >> index;
 	cout << "Введите значение добавляемого элемента: "; cin >> value;
 	list.insert(value, index);
+	list.print();
+	cout << "Введите индекс удаляемого значения элемента: "; cin >> index;
+	list.erase(value, index);
 	list.print();
 #endif // BASE_CHECK
 
@@ -216,5 +247,26 @@ void main()
 	}
 	cout << endl;
 #endif //HOME_WORK_1
+
+#ifdef ACTUAL_WORK
+	ForwardList list1;
+	list1.push_back(3);
+	list1.push_back(5);
+	list1.push_back(8);
+	list1.push_back(13);
+	list1.push_back(21);
+	list1 = list1;
+	list1.print();
+
+	//ForwardList list2 = list1;	//CopyConstructor
+	ForwardList list2;
+//i-calur = r-value;
+	list2 = list1;					//	CopyAssigment
+	list2.print();
+	list2 = list1;					//	CopyAssigment
+	list2.print();
+	list2 = list1;					//	CopyAssigment
+	list2.print();
+#endif // ACTUAL_WORK
 
 }
