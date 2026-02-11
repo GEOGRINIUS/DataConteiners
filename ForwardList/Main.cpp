@@ -1,5 +1,6 @@
 ﻿#pragma warning (disable:4326)
 #include<iostream>
+#include<ctime>
 using namespace std;
 using std::cin;
 using std::cout;
@@ -19,12 +20,18 @@ public:
 	Element(int Data, Element* pNext = nullptr) :Data(Data), pNext(pNext)
 	{
 		count++;
+#ifdef DEBUG
 		cout << "EConstructor:\t" << this << endl;
+#endif // DEBUG
+
 	}
 	~Element()
 	{
 		count--;
+#ifdef DEBUG
 		cout << "EDestructor:\t" << this << endl;
+#endif // DEBUG
+
 	}
 	friend class ForwardList;
 };
@@ -54,8 +61,9 @@ public:
 	}
 	ForwardList(const ForwardList& other) :ForwardList()
 	{
-		for (Element* Temp = other.Head; Temp; Temp = Temp->pNext)
-			push_back(Temp->Data);
+		/*for (Element* Temp = other.Head; Temp; Temp = Temp->pNext)
+			push_back(Temp->Data);*/
+		*this = other;
 		cout << "LCopyConstructor:\t" << this << endl;
 	}
 	~ForwardList()
@@ -70,7 +78,9 @@ public:
 		if (this == &other)return *this;
 		while (Head)pop_front();
 		for (Element* Temp = other.Head; Temp; Temp = Temp->pNext)
-			push_back(Temp->Data);
+			push_front(Temp->Data);
+		reverse();
+		cout << "LCopyAssigment:\t" << this << endl;
 		return *this;
 	}
 	int& operator[](int Index)
@@ -166,6 +176,17 @@ public:
 	}
 
 	//			Methods:
+	void reverse()
+	{
+		ForwardList reverse;
+		while (Head)
+		{
+			reverse.push_front(Head->Data);
+			pop_front();
+		}
+		this->Head = reverse.Head;
+		reverse.Head = nullptr;
+	}
 	void print()const
 	{
 		//Element* Temp = Head;	//Temp - это Итератор.
@@ -186,6 +207,8 @@ public:
 //#define BASE_CHECK
 //#define SIZE_CHECK
 //#define HOME_WORK_1
+//#define COPY_SENMANTIC_CHECK
+#define PERFORMANCE_CHECK
 
 void main()
 {
@@ -247,6 +270,8 @@ void main()
 	cout << endl;
 #endif //HOME_WORK_1
 
+#ifdef COPY_SENMANTIC_CHECK
+
 	ForwardList list1;
 	list1.push_back(3);
 	list1.push_back(5);
@@ -256,14 +281,42 @@ void main()
 	list1 = list1;
 	list1.print();
 
-	//ForwardList list2 = list1;	//CopyConstructor
-	ForwardList list2;
+	ForwardList list2 = list1;	//CopyConstructor
+	list2.print();
+	//ForwardList list2;
 //i-calur = r-value;
 	list2 = list1;					//	CopyAssigment
 	list2.print();
-	list2 = list1;					//	CopyAssigment
-	list2.print();
-	list2 = list1;					//	CopyAssigment
-	list2.print();
 
+#endif // COPY_SENMANTIC_CHECK
+
+#ifdef PERFORMANCE_CHECK
+
+	int n;
+	cout << "Введите размер списка: "; cin >> n;
+	ForwardList list1;
+	clock_t start = clock();		//Функция clock() возвращает количество тактов, и мы сохраняем его в переменную 'start';
+	for (int i = 0; i < n; i++)
+	{
+		//list1.push_back(rand() % 100);
+		list1.push_front(rand() % 100);
+	}
+	clock_t end = clock();		    //Сохраняем количество тактов, потраченных на заполнение списка;
+	//Теперь разность замеров 'start' и 'end' (end - start) - это время, потраченное на заполнение списка тактах;
+	//Для того чтобы определить время в секундах, нужно промежуток времени в тактах разделить на количество тактов за 1 секунду;
+	//list1.print();
+	cout << delimiter << endl;
+	cout << "list1 заполнен за " << double(end-start)/CLOCKS_PER_SEC << " секунд" << endl;
+	cout << delimiter << endl;
+	system("PAUSE");
+	start = clock();
+	ForwardList list2 = list1;
+	end = clock();
+	cout << delimiter << endl;
+	cout << "list2 скорпирован за " << double(end-start)/CLOCKS_PER_SEC << " секунд" << endl;
+	cout << delimiter << endl;
+	//list2.print();
+
+#endif // PERFORMANCE_CHECK
+	
 }
