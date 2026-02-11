@@ -183,10 +183,9 @@ public:
 	}
 };
 
-#define BASE_CHECK
+//#define BASE_CHECK
 //#define SIZE_CHECK
 //#define HOME_WORK_1
-//#define ACTUAL_WORK
 
 void main()
 {
@@ -248,7 +247,6 @@ void main()
 	cout << endl;
 #endif //HOME_WORK_1
 
-#ifdef ACTUAL_WORK
 	ForwardList list1;
 	list1.push_back(3);
 	list1.push_back(5);
@@ -267,6 +265,5 @@ void main()
 	list2.print();
 	list2 = list1;					//	CopyAssigment
 	list2.print();
-#endif // ACTUAL_WORK
 
 }
