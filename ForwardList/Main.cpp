@@ -64,6 +64,14 @@ public:
 		while (size--)push_front(0);
 		cout << "1argLConstructor:\t" << this << endl;
 	}
+	ForwardList(const std::initializer_list<int>& il) :ForwardList()
+	{
+		cout << typeid(il.begin()).name() << endl;
+		for (int const* it = il.begin(); it != il.end(); it++)
+		{
+			push_back(*it);
+		}
+	}
 	ForwardList(const ForwardList& other) :ForwardList()
 	{
 		//Deep copy
@@ -244,6 +252,9 @@ ForwardList operator+(const ForwardList& left, const ForwardList& right)
 //#define HOME_WORK_1
 //#define COPY_SENMANTIC_CHECK
 //#define PERFORMANCE_CHECK
+//#define MOVE_SENMANTIC_CHECK
+//#define RANGE_BASED_FOR_ARRAY
+#define HOMEWORK
 
 void main()
 {
@@ -354,6 +365,7 @@ void main()
 
 #endif // PERFORMANCE_CHECK
 
+#ifdef MOVE_SENMANTIC_CHECK
 	ForwardList list1;
 	list1.push_back(3);
 	list1.push_back(5);
@@ -370,5 +382,32 @@ void main()
 	ForwardList list3 = list1 + list2;
 	cout << delimiter << endl;
 	list3.print();
+#endif //MOVE_SENMANTIC_CHECK
+
+#ifdef RANGE_BASED_FOR_ARRAY
+
+
+	int arr[] = { 3, 5, 8, 13, 21 };
+	for (int i = 0; i < sizeof(arr)/sizeof(arr[0]); i++)
+	{
+		cout << arr[i] << tab;
+	}
+	cout << endl;
+
+	//Range-base for (for для контейнорв)
+	for (int i : arr)
+	{
+		cout << i << tab;
+	}
+	cout << endl;
+#endif // RANGE_BASED_FOR_ARRAY
+
+#ifdef HOMEWORK
+
+	ForwardList list = { 3, 5, 8, 13, 21 };
+
+	list.print();
+
+#endif //HOMEWORK
 
 }
