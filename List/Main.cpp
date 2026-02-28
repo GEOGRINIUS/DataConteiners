@@ -16,6 +16,7 @@ class List
 		int Data;
 		element* pNext;
 		element* pPrev;
+		List* Temp;
 	public:
 		element(int Data, element* pNext = nullptr, element* pPrev = nullptr) :
 			Data(Data), pNext(pNext), pPrev(pPrev)
@@ -35,6 +36,11 @@ public:
 		Head = Tail = nullptr;
 		size = 0;
 		cout << "LConstructor:\t" << this << endl;
+	}
+	List(const std::initializer_list<int>& il) :List()
+	{
+		for (int const* it = il.begin(); it != il.end(); ++it)
+			push_back(*it);
 	}
 	~List()
 	{
@@ -158,7 +164,7 @@ public:
 	}
 };
 
-#define BASE_CHECK
+//#define BASE_CHECK
 
 void main()
 {
@@ -188,6 +194,12 @@ void main()
 	
 	list.print();
 	list.reverse_print();
-#endif // 
+#endif // BASE_CHECK
+	
+
+	List list = { 3, 5, 8, 13, 21 };
+	//list.print();
+	for (int i : list) cout << i << tab; cout << endl;
+
 
 }  
