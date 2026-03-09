@@ -42,11 +42,9 @@ public:
 	friend class ConstIterator<T>;
 	friend ForwardList<T> operator+(const ForwardList<T>& left, const ForwardList<T>& right);
 };
-template <typename T>
-int Element<T>::count = 0;
+template <typename T> int Element<T>::count = 0;
 
-template <typename T>
-class Iterator
+template <typename T> class Iterator
 {
 	Element<T>* Temp;
 public:
@@ -83,8 +81,7 @@ public:
 	}
 };
 
-template <typename T>
-class ConstIterator
+template <typename T> class ConstIterator
 {
 	Element<T>* Temp;
 public:
@@ -121,8 +118,7 @@ public:
 	}
 };
 
-template <typename T>
-class ForwardList
+template <typename T> class ForwardList
 {
 	Element<T>* Head;		//Голова списка - является точкой входа в список;
 	int size;
@@ -152,7 +148,7 @@ public:
 		return nullptr;
 	}
 //					Constructors:
-	ForwardList()
+	template<typename T>ForwardList<T>::ForwardList()
 	{
 		//Конструктор по умолчанию создает пустой список;
 		Head = nullptr;
@@ -160,7 +156,7 @@ public:
 		size = 0;
 		cout << "Lconstructor:\t" << this << endl;
 	}
-	explicit ForwardList(int size):ForwardList()
+	template<typename T>explicit ForwardList<T>::ForwardList(int size):ForwardList()
 	{
 		while (size--)push_front(0);
 		cout << "1argLConstructor:\t" << this << endl;
@@ -321,8 +317,40 @@ public:
 	}
 };
 
-template <typename T>
-ForwardList<T> operator+(const ForwardList<T>& left, const ForwardList<T>& right)
+Element<T>* get_head()const;
+int get_size() const;
+ConstIterator<T> begin()const;
+ConstIterator<T> end()const;
+Iterator<T> begin();
+Iterator<T> end();
+//					Constructors:
+ForwardList();
+explicit ForwardList(int size);
+ForwardList(const std::initializer_list<T>& il);
+ForwardList(const ForwardList<T>& other);
+ForwardList(ForwardList<T>&& other);
+~ForwardList();
+
+//				Operators:
+ForwardList<T>& operator=(const ForwardList<T>& other);
+ForwardList<T>& operator=(ForwardList<T>&& other);
+T& operator[](int Index);
+
+//				Adding elements:
+void push_front(T Data);
+void push_back(T Data);
+void insert(T Data, int Index);
+
+//			Removing elements:
+void pop_front();
+void pop_back();
+void erase(T Data, int Index);
+
+//			Methods:
+void reverse();
+void print()const;
+
+template <typename T> ForwardList<T> operator+(const ForwardList<T>& left, const ForwardList<T>& right)
 {
 	ForwardList<T> result = left;	//CopyConstructor
 	//for (Element* Temp = right.get_head(); Temp; Temp = Temp->pNext) result.push_back(Temp->Data);
