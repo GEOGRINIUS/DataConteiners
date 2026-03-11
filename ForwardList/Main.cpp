@@ -123,27 +123,62 @@ template <typename T> class ForwardList
 	Element<T>* Head;		//Голова списка - является точкой входа в список;
 	int size;
 public:
-	Element<T>* get_head()const
+
+	Element<T>* get_head()const;
+	int get_size() const;
+	ConstIterator<T> begin()const;
+	ConstIterator<T> end()const;
+	Iterator<T> begin();
+	Iterator<T> end();
+	//					Constructors:
+	ForwardList();
+	explicit ForwardList(int size);
+	ForwardList(const std::initializer_list<T>& il);
+	ForwardList(const ForwardList<T>& other);
+	ForwardList(ForwardList<T>&& other);
+	~ForwardList();
+
+	//				Operators:
+	ForwardList<T>& operator=(const ForwardList<T>& other);
+	ForwardList<T>& operator=(ForwardList<T>&& other);
+	T& operator[](int Index);
+
+	//				Adding elements:
+	void push_front(T Data);
+	void push_back(T Data);
+	void insert(T Data, int Index);
+
+	//			Removing elements:
+	void pop_front();
+	void pop_back();
+	void erase(T Data, int Index);
+
+	//			Methods:
+	void reverse();
+	void print()const;
+
+};
+	template<typename T>Element<T>* ForwardList<T>::get_head()const
 	{
 		return Head;
 	}
-	int get_size() const
+	template<typename T>int ForwardList<T>::get_size() const
 	{
 		return size;
 	}
-	ConstIterator<T> begin()const
+	template<typename T>ConstIterator<T> ForwardList<T>::begin()const
 	{
 		return Head;
 	}
-	ConstIterator<T> end()const
+	template<typename T>ConstIterator<T> ForwardList<T>::end()const
 	{
 		return nullptr;
 	}
-	Iterator<T> begin()
+	template<typename T>Iterator<T> ForwardList<T>::begin()
 	{
 		return Head;
 	}
-	Iterator<T> end()
+	template<typename T>Iterator<T> ForwardList<T>::end()
 	{
 		return nullptr;
 	}
@@ -156,12 +191,12 @@ public:
 		size = 0;
 		cout << "Lconstructor:\t" << this << endl;
 	}
-	template<typename T>explicit ForwardList<T>::ForwardList(int size):ForwardList()
+	template<typename T> ForwardList<T>::ForwardList(int size):ForwardList()
 	{
 		while (size--)push_front(0);
 		cout << "1argLConstructor:\t" << this << endl;
 	}
-	ForwardList(const std::initializer_list<T>& il) :ForwardList()
+	template<typename T>ForwardList<T>::ForwardList(const std::initializer_list<T>& il) :ForwardList()
 	{
 		cout << typeid(il.begin()).name() << endl;
 		for (T const* it = il.begin(); it != il.end(); it++)
@@ -169,7 +204,7 @@ public:
 			push_back(*it);
 		}
 	}
-	ForwardList(const ForwardList<T>& other) :ForwardList()
+	template<typename T>ForwardList<T>::ForwardList(const ForwardList<T>& other) :ForwardList()
 	{
 		//Deep copy
 		/*for (Element* Temp = other.Head; Temp; Temp = Temp->pNext)
@@ -177,7 +212,7 @@ public:
 		*this = other;
 		cout << "LCopyConstructor:\t" << this << endl;
 	}
-	ForwardList(ForwardList<T>&& other):ForwardList()
+	template<typename T>ForwardList<T>::ForwardList(ForwardList<T>&& other):ForwardList()
 	{
 		//Shallow copy:
 		/*this->Head = other.Head;
@@ -187,14 +222,14 @@ public:
 		*this = std::move(other);	//Метод 'std::move()' вызывает MoveAssigment.
 		cout << "LMoveConstructor:\t" << this << endl;
 	}
-	~ForwardList()
+	template<typename T>ForwardList<T>::~ForwardList()
 	{
 		while (Head)pop_front();
 		cout << "LDestructor:\t" << this << endl;
 	}
 
 //				Operators:
-	ForwardList<T>& operator=(const ForwardList<T>& other)
+	template<typename T>ForwardList<T>& ForwardList<T>::operator=(const ForwardList<T>& other)
 	{
 		if (this == &other)return *this;
 		while (Head)pop_front();
@@ -204,7 +239,7 @@ public:
 		cout << "LCopyAssigment:\t" << this << endl;
 		return *this;
 	}
-	ForwardList<T>& operator=(ForwardList<T>&& other)
+	template<typename T>ForwardList<T>& ForwardList<T>::operator=(ForwardList<T>&& other)
 	{
 		if (this == &other)return *this;
 		while (Head)pop_front();
@@ -215,21 +250,21 @@ public:
 		cout << "MoveAssigment:\t" << this << endl;
 		return *this;
 	}
-	T& operator[](int Index)
+	template<typename T>T& ForwardList<T>::operator[](int Index)
 	{
 		Element<T>* Temp = Head;
-		for (int i = 9; i < Index; i++)Temp = Temp->pNext;
+		for (int i = 0; i < Index; i++)Temp = Temp->pNext;
 		return Temp->Data;
 	}
 
 //				Adding elements:
-	void push_front(T Data)
+	template<typename T>void ForwardList<T>::push_front(T Data)
 	{
 		Head = new Element<T>(Data, Head);
 
 		size++;
 	}
-	void push_back(T Data)
+	template<typename T>void ForwardList<T>::push_back(T Data)
 	{
 		if (Head == nullptr)return push_front(Data);
 
@@ -244,7 +279,7 @@ public:
 		size++;
 	}
 
-	void insert(T Data, int Index)
+	template<typename T>void ForwardList<T>::insert(T Data, int Index)
 	{
 		if (Index == 0) return push_front(Data);
 
@@ -260,7 +295,7 @@ public:
 	}
 
 	//			Removing elements:
-	void pop_front()
+	template<typename T>void ForwardList<T>::pop_front()
 	{
 		//1) Запоминаем адрес удаляеиого элемента:
 		Element<T>* Erased = Head;
@@ -271,7 +306,7 @@ public:
 		size--;
 	}
 
-	void pop_back()
+	template<typename T>void ForwardList<T>::pop_back()
 	{
 		//1) Доходим до предпоследнего элемента из списка:
 		Element<T>* Temp = Head;
@@ -283,7 +318,7 @@ public:
 		size--;
 	}
 
-	void erase(T Data, int Index)
+	template<typename T>void ForwardList<T>::erase(T Data, int Index)
 	{
 		if (Index == 0) return pop_front();
 		Element<T>* buffer;
@@ -296,7 +331,7 @@ public:
 	}
 
 	//			Methods:
-	void reverse()
+	template<typename T>void ForwardList<T>::reverse()
 	{
 		ForwardList<T> reverse;
 		while (Head)
@@ -307,7 +342,7 @@ public:
 		this->Head = reverse.Head;
 		reverse.Head = nullptr;
 	}
-	void print()const
+	template<typename T>void ForwardList<T>::print()const
 	{
 		for (Element<T>* Temp = Head; Temp; Temp = Temp->pNext)
 			cout << Temp << tab << Temp->Data << tab << Temp->pNext << endl;
@@ -315,40 +350,7 @@ public:
 		cout << "Общее количество элементов: " << Element<T>::count << endl;
 		//cout << "Количество элементов списка: " << Head->count << endl;
 	}
-};
 
-Element<T>* get_head()const;
-int get_size() const;
-ConstIterator<T> begin()const;
-ConstIterator<T> end()const;
-Iterator<T> begin();
-Iterator<T> end();
-//					Constructors:
-ForwardList();
-explicit ForwardList(int size);
-ForwardList(const std::initializer_list<T>& il);
-ForwardList(const ForwardList<T>& other);
-ForwardList(ForwardList<T>&& other);
-~ForwardList();
-
-//				Operators:
-ForwardList<T>& operator=(const ForwardList<T>& other);
-ForwardList<T>& operator=(ForwardList<T>&& other);
-T& operator[](int Index);
-
-//				Adding elements:
-void push_front(T Data);
-void push_back(T Data);
-void insert(T Data, int Index);
-
-//			Removing elements:
-void pop_front();
-void pop_back();
-void erase(T Data, int Index);
-
-//			Methods:
-void reverse();
-void print()const;
 
 template <typename T> ForwardList<T> operator+(const ForwardList<T>& left, const ForwardList<T>& right)
 {
