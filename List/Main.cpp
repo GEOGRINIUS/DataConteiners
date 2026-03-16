@@ -18,19 +18,8 @@ class List
 		Element* pPrev;
 		List* Temp;
 	public:
-		Element(T Data, Element* pNext = nullptr, Element* pPrev = nullptr) :
-			Data(Data), pNext(pNext), pPrev(pPrev)
-		{
-#ifdef DEBUG
-			cout << "EConstructor:\t" << this << endl;
-#endif // DEBUG
-		}
-		~Element()
-		{
-#ifdef DEBUG
-			cout << "EDestructor:\t" << this << endl;
-#endif // DEBUG
-		}
+		Element(T Data, Element<T>* pNext = nullptr, Element<T>* pPrev = nullptr);
+		~Element();
 		friend class List;
 	}*Head, * Tail;
 	size_t size;
@@ -39,20 +28,11 @@ class List
 	protected:
 		Element* Temp;
 	public:
-		ConstBaseIterator(Element* Temp = nullptr) :Temp(Temp) {}
-		~ConstBaseIterator() {}
-		bool operator==(const ConstBaseIterator& other)const
-		{
-			return this->Temp == other.Temp;
-		}
-		bool operator!=(const ConstBaseIterator& other)const
-		{
-			return this->Temp != other.Temp;
-		}
-		T operator*()const
-		{
-			return Temp->Data;
-		}
+		ConstBaseIterator(Element* Temp = nullptr);
+		~ConstBaseIterator();
+		bool operator==(const ConstBaseIterator& other)const;
+		bool operator!=(const ConstBaseIterator& other)const;
+		T operator*()const;
 	};
 public:
 	class ConstIterator:public ConstBaseIterator
@@ -302,6 +282,44 @@ template<typename T> void Print(const List<T>& list)
 {
 	
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------Element------------------------------------------------------------//
+template<typename T> Element<T>::Element(T Data, Element<T>* pNext, Element<T>* pPrev) :
+	Data(Data), pNext(pNext), pPrev(pPrev)
+{
+#ifdef DEBUG
+	cout << "EConstructor:\t" << this << endl;
+#endif // DEBUG
+}
+template<typename T> Element<T>::~Element()
+{
+#ifdef DEBUG
+	cout << "EDestructor:\t" << this << endl;
+#endif // DEBUG
+}
+//-------------------------------------------------Element End------------------------------------------------------------//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------ConstBaseIterator--------------------------------------------------------// 
+template<typename T> ConstBaseIterator<T>::ConstBaseIterator(Element<T>* Temp) :Temp(Temp) {}
+template<typename T> ConstBaseIterator<T>::~ConstBaseIterator() {}
+template<typename T> bool ConstBaseIterator<T>::operator==(const ConstBaseIterator& other)const
+{
+	return this->Temp == other.Temp;
+}
+template<typename T> bool ConstBaseIterator<T>::operator!=(const ConstBaseIterator& other)const
+{
+	return this->Temp != other.Temp;
+}
+template<typename T> T ConstBaseIterator<T>::operator*()const
+{
+	return Temp->Data;
+}
+//--------------------------------------------ConstBaseIterator End------------------------------------------------------//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 //#define BASE_CHECK
 //#define ITERATORS_CHECK

@@ -31,7 +31,6 @@ public:
 	friend class ConstIterator<T>;
 	friend ForwardList<T> operator+(const ForwardList<T>& left, const ForwardList<T>& right);
 };
-template <typename T> int Element<T>::count = 0;
 
 template <typename T> class Iterator
 {
@@ -105,7 +104,7 @@ public:
 
 /////////////////////////////////////////////////////
 /////	Class definition (Определение класса)	/////
-
+template <typename T> int Element<T>::count = 0;
 
 template<typename T>Element<T>::Element(T Data, Element<T>* pNext) :Data(Data), pNext(pNext)
 {
