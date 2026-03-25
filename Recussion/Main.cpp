@@ -6,6 +6,22 @@ using std::endl;
 #define tab "\t"
 #define delimiter "\n----------------------------------------------------------------\n"
 
+class Fibonachi
+{
+	static void Calculate(int n, int a, int b)
+	{
+		if (a > n)return;
+		cout << a << "\t";
+		Calculate(n, b, a + b);
+	}
+public:
+	static void Calculate(int n)
+	{
+		Calculate(n, 0, 1);
+		cout << endl;
+	}
+};
+
 void Elevator(int floor);
 int Factorial(int n);
 double Power(double a, int n);
@@ -27,7 +43,7 @@ void main()
 	cout << Power(a, n) << endl;*/
 
 	cout << "Введите предел ряда Фибоначчи: "; cin >> n;
-	Fibonachi(n);
+	Fibonachi::Calculate(n);
 	cout << endl;
 
 	main();
