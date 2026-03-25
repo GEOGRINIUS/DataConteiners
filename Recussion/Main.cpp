@@ -13,21 +13,21 @@ double Power(double a, int n);
 void main()
 {
 	setlocale(LC_ALL, "");
-	cout << "Hello world!";
+	cout << "Hello world!" << endl;
 	int n;
 	int a;
+	int b;
 	//cout << "¬ведите номер этажа: "; cin >> n;
 	//Elevator(n);
-
 	/*cout << "¬ведите число: "; cin >> n;
 	cout << Factorial(n) << endl;*/
 
+	cout << "¬ведите положительное или отричательное значение: "; cin >> b;
 	cout << "¬ведите основание степени: "; cin >> a;
 	cout << "¬ведите показатель степени: "; cin >> n;
 	cout << Power(a, n) << endl;
 
-	//main();
-
+	main();
 }
 
 void Elevator(int floor)
@@ -49,8 +49,12 @@ int Factorial(int n)
 	else return n*factorial(n - 1);*/
 }
 
-double Power(double a, int n)
+double Power(double a, int n, int b)
 {
-	if (n == 0)return 1;
-	else return a * Power(a, n - 1);
+	return n == 0 ? 1 : n > 0 ? a * Power(a, n - 1) : 1 / Power(a, -n);
+
+	/*if (n == 0)return 1;
+	else if (n > 0) return a * Power(a, n - 1);
+	else return 1 / Power(a, -n);*/
+	//else return 1 / a * Power(a, n + 1);
 }
