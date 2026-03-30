@@ -8,6 +8,7 @@ using std::endl;
 
 class Tree
 {
+protected:
 	class Element
 	{
 		int Data;
@@ -24,6 +25,7 @@ class Tree
 			cout << "EDestructor:\t" << this << endl;
 		}
 		friend class Tree;
+		friend class UnigueTree;
 	}*Root;
 public:
 	Element* getRoot()
@@ -91,6 +93,25 @@ public:
 		print(Root->pRight);
 	}
 };
+class UnigueTree:public Tree
+{
+public:
+	void insert(int Data, Element* Root)
+	{
+		if (this->Root == nullptr)this->Root = new Element(Data);
+		if (Root == nullptr)return;
+		if (Data < Root->Data)
+		{
+			if (Root->pLeft == nullptr)Root->pLeft = new Element(Data);
+			else insert(Data, Root->pLeft);
+		}
+		else if(Data > Root->Data)
+		{
+			if (Root->pRight == nullptr)Root->pRight = new Element(Data);
+			else insert(Data, Root->pRight);
+		}
+	}
+};
 
 void main()
 {
@@ -103,7 +124,7 @@ void main()
 	cout << "Максимальное значение в дереве: " << tree.maxValue(tree.getRoot()) << endl;
 	for (int i = 0; i < n; i++)
 	{
-		tree.insert(rand() % 100 - 50, tree.getRoot());
+		tree.insert(rand() % 100, tree.getRoot());
 	}
 	tree.print(tree.getRoot());
 	cout << endl;
@@ -112,4 +133,20 @@ void main()
 	cout << "Сумма элементов дерева: " << tree.sum(tree.getRoot()) << endl;
 	cout << "Количество элементов дерева: " << tree.count(tree.getRoot()) << endl;
 	cout << "Среднее-арифмитическое элементов дерева: " << tree.avg() << endl;
+
+	cout << delimiter;
+	cout << endl;
+
+	UnigueTree u_tree;
+	for (int i = 0; i < n; i++)
+	{
+		u_tree.insert(rand() % 100, u_tree.getRoot());
+	}
+	u_tree.print(u_tree.getRoot());
+	cout << endl;
+	cout << "Минимальное значение в дереве: " <<u_tree.minValue(u_tree.getRoot()) << endl;
+	cout << "Максимальное значение в дереве: " <<u_tree.maxValue(u_tree.getRoot()) << endl;
+	cout << "Сумма элементов дерева: " <<u_tree.sum(tree.getRoot()) << endl;
+	cout << "Количество элементов дерева: " <<u_tree.count(u_tree.getRoot()) << endl;
+	cout << "Среднее-арифмитическое элементов дерева: " << u_tree.avg() << endl;
 }
