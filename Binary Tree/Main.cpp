@@ -57,7 +57,6 @@ public:
 	void erase(int Data)
 	{
 		erase(Data, Root);
-		Root = nullptr;
 	}
 	int minValue()const
 	{
@@ -112,16 +111,35 @@ private:
 			else insert(Data, Root->pRight);
 		}
 	}
-	void erase(int Data, Element* Root)
+	void erase(int Data, Element*& Root)
 	{
 		if (Root == nullptr)return;
 		if (Data == Root->Data)
 		{
 			if (Root->pLeft == Root->pRight)	//Проверяем, является ли удаляемый элеменет листком.
 			{
+				//И если элемент - листок (НЕ имеет потомков), удаляем его из памяти
 				delete Root;
 				Root = nullptr;
 			}
+			else
+			{
+				if (count(Root->pLeft) > count(Root->pRight))
+				{
+					Root->Data = maxValue(Root->pLeft);
+					erase(maxValue(Root->pLeft), Root->pRight);
+				}
+				else
+				{
+					Root->Data = minValue(Root->pRight);
+					erase(minValue(Root->pRight), Root->pRight);
+				}
+			}
+		}
+		if (Root)
+		{
+		if (Root->pLeft)erase(Data, Root->pLeft);
+		if (Root->pRight)erase(Data, Root->pRight);
 		}
 	}
 	int minValue(Element* Root)const
@@ -239,6 +257,9 @@ void main()
 	};
 	tree.print();
 	cout << "Глубина дерева: " << tree.depth() << endl;
-	tree.clear();
+	//tree.clear();
+	int value;
+	cout << "Введите удаляемое значение: "; cin >> value;
+	tree.erase(value);
 	tree.print();
 }
