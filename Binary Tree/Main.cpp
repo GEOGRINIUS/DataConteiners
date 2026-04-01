@@ -36,13 +36,28 @@ public:
 	{
 		cout << "TConstrucotr:\t" << this << endl;
 	}
+	Tree(const std::initializer_list<int>& il) :Tree()
+	{
+		for (int const* it = il.begin(); it != il.end(); it++)
+			insert(*it);
+	}
 	~Tree()
 	{
 		cout << "TDestructor:\t" << this << endl;
 	}
+	void clear()
+	{
+		clear(Root);
+		//Root = nullptr;
+	}
 	void insert(int Data)
 	{
 		insert(Data, Root);
+	}
+	void erase(int Data)
+	{
+		erase(Data, Root);
+		Root = nullptr;
 	}
 	int minValue()const
 	{
@@ -64,12 +79,24 @@ public:
 	{
 		return (double)sum(Root) / count(Root);
 	}
+	int depth() const
+	{
+		return depth(Root);
+	}
 	void print()const
 	{
 		print(Root);
 		cout << endl;
 	}
 private:
+	void clear(Element*& Root)
+	{
+		if (Root == nullptr)return;
+		clear(Root->pLeft);
+		clear(Root->pRight);
+		delete Root;
+		Root = nullptr;
+	}
 	void insert(int Data, Element* Root)
 	{
 		if (this->Root == nullptr)this->Root = new Element(Data);
@@ -85,7 +112,18 @@ private:
 			else insert(Data, Root->pRight);
 		}
 	}
-
+	void erase(int Data, Element* Root)
+	{
+		if (Root == nullptr)return;
+		if (Data == Root->Data)
+		{
+			if (Root->pLeft == Root->pRight)	//Проверяем, является ли удаляемый элеменет листком.
+			{
+				delete Root;
+				Root = nullptr;
+			}
+		}
+	}
 	int minValue(Element* Root)const
 	{
 		if (this->Root == nullptr)return 0;
@@ -110,7 +148,12 @@ private:
 	{
 		return Root == nullptr ? 0 : count(Root->pLeft) + count(Root->pRight) + 1;
 	}
-
+	int depth(Element* Root)const
+	{
+		if (Root == nullptr) return 0;
+		if (depth(Root->pLeft) > depth(Root->pRight)) return depth(Root->pLeft) + 1;
+		else return depth(Root->pRight) + 1;
+	}
 	void print(Element* Root)const
 	{
 		if (Root == nullptr)return;
@@ -143,9 +186,14 @@ public:
 	}
 };
 
+//#define BASE_CHECK
+
 void main()
 {
 	setlocale(LC_ALL, "");
+
+#ifdef BASE_CHECK
+
 
 	int n;
 	cout << "Введите размер дерево: "; cin >> n;
@@ -179,4 +227,18 @@ void main()
 	cout << "Сумма элементов дерева: " <<u_tree.sum() << endl;
 	cout << "Количество элементов дерева: " <<u_tree.count() << endl;
 	cout << "Среднее-арифмитическое элементов дерева: " << u_tree.avg() << endl;
+#endif // BASE_CHECK
+
+	Tree tree = 
+	{ 
+					50, 
+
+			25,				75, 
+
+		16,		32,		 64,   85, 91, 98 
+	};
+	tree.print();
+	cout << "Глубина дерева: " << tree.depth() << endl;
+	tree.clear();
+	tree.print();
 }
