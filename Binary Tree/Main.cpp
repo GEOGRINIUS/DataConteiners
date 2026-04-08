@@ -88,15 +88,19 @@ public:
 	{
 		return depth(Root);
 	}
-	void depth_print(int depth)const
+	void depth_print(int depth, int iterval)const
 	{
-		depth_print(Root, depth);
+		depth_print(Root, depth, iterval);
 		cout << endl;
 	}
 	void print()const
 	{
 		print(Root);
 		cout << endl;
+	}
+	void tree_print()const
+	{
+		tree_print(0, depth()*8);
 	}
 private:
 	void clear(Element*& Root)
@@ -188,16 +192,25 @@ private:
 		/*if (depth(Root->pLeft) > depth(Root->pRight)) return depth(Root->pLeft) + 1;
 		else return depth(Root->pRight) + 1;*/
 	}
-	void depth_print(Element* Root, int depth) const
+	void depth_print(Element* Root, int depth, int iterval = 8) const
 	{
-		if (Root == nullptr)return;
-		if (depth == 0)
+		cout.width(iterval);
+		if (Root == nullptr)
 		{
-			cout << Root->Data << "\t";
+			cout << "";
 			return;
 		}
-		depth_print(Root->pLeft, depth - 1);
-		depth_print(Root->pRight, depth - 1);
+		if (depth == 0)
+		{
+			cout << Root->Data;
+			cout.width(iterval);
+			cout << "";
+			return;
+		}
+		/*cout.width(iterval);
+		cout << "";*/
+		depth_print(Root->pLeft, depth - 1, iterval);
+		depth_print(Root->pRight, depth - 1, iterval);
 	}
 	void print(Element* Root)const
 	{
@@ -205,6 +218,16 @@ private:
 		print(Root->pLeft);
 		cout << Root->Data << "\t";
 		print(Root->pRight);
+	}
+	void tree_print(int depth, int iterval = 8)const
+	{
+		if (depth == this->depth())return;
+		//int iterval = (this->depth() - depth) * 8;
+		depth_print(depth, iterval);
+		cout << endl;
+		cout << endl;
+		cout << endl;
+		tree_print(depth + 1, iterval/2);
 	}
 };
 class UnigueTree:public Tree
@@ -369,9 +392,10 @@ void main()
 
 			25,				75,
 
-		16,		32,		64,		85, 91, 98
+		16,		32,		64,		85, 91//, 98
 	};
-	tree.depth_print(2);
+	//tree.depth_print(2);
+	tree.tree_print();
 #endif // DEPTH_CHECK
 
 }
