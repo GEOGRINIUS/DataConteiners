@@ -51,6 +51,10 @@ public:
 	{
 		cout << "TDestructor:\t" << this << endl;
 	}
+	void balance()
+	{
+		balance(Root);
+	}
 	void clear()
 	{
 		clear(Root);
@@ -103,6 +107,31 @@ public:
 		tree_print(0, depth()*8);
 	}
 private:
+	void balance(Element* Root)
+	{
+		if (Root == nullptr)return;
+		if (abs(count(Root->pLeft) - count(Root->pRight)) > 2)
+		{
+			if (count(Root->pLeft) > count(Root->pRight))
+			{
+				if (Root->pRight == nullptr)Root->pRight = new Element(Root->Data);
+				else insert(Root->Data, Root->pRight);
+				insert(Root->Data, Root->pRight);
+				Root->Data = maxValue(Root->pLeft);
+				erase(maxValue(Root->pLeft), Root->pLeft);
+			}
+			else
+			{
+				if (Root->pLeft == nullptr)Root->pLeft = new Element(Root->Data);
+				else insert(Root->Data, Root->pLeft);
+				insert(Root->Data, Root->pLeft);
+				Root->Data = maxValue(Root->pRight);
+				erase(maxValue(Root->pRight), Root->pRight);
+			}
+		}
+		balance(Root->pLeft);
+		balance(Root->pRight);
+	}
 	void clear(Element*& Root)
 	{
 		if (Root == nullptr)return;
@@ -270,6 +299,7 @@ void measure(const char message[], T(Tree::*function)(/*Функция ничего не приним
 //#define BASE_CHECK
 //#define ERASE_CHECK
 //#define PERFORMANCE_CHECK
+//#define TREE_CHECK
 #define DEPTH_CHECK
 
 void main()
@@ -384,7 +414,7 @@ void main()
 
 #endif // PERFORMANCE_CHECK
 
-#ifdef DEPTH_CHECK
+#ifdef TREE_CHECK
 
 	Tree tree =
 	{
@@ -396,6 +426,10 @@ void main()
 	};
 	//tree.depth_print(2);
 	tree.tree_print();
-#endif // DEPTH_CHECK
+#endif // TREE_CHECK
 
+	Tree tree = { 55, 34, 21, 13, 8, 5, 2 };
+	tree.tree_print();
+	tree.balance();
+	tree.tree_print();
 }
