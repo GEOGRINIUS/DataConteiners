@@ -1,11 +1,12 @@
-#include<iostream>
-#include<Ctime>
+п»ї#include<iostream>
+#include<ctime>
 using std::cin;
 using std::cout;
 using std::endl;
 
-#define tab "\t"
-#define delimiter "\n----------------------------------------------------------------\n"
+#define tab			"\t"
+#define delimiter	"\n-----------------------------------\n"
+
 
 class Tree
 {
@@ -22,7 +23,6 @@ protected:
 #ifdef DEBUG
 			cout << "EConstructor:\t" << this << endl;
 #endif // DEBUG
-
 		}
 		~Element()
 		{
@@ -31,7 +31,7 @@ protected:
 #endif // DEBUG
 		}
 		friend class Tree;
-		friend class UnigueTree;
+		friend class UniqueTree;
 	}*Root;
 public:
 	Element* getRoot()
@@ -40,7 +40,7 @@ public:
 	}
 	Tree() :Root(nullptr)
 	{
-		cout << "TConstrucotr:\t" << this << endl;
+		cout << "TConstructor:\t" << this << endl;
 	}
 	Tree(const std::initializer_list<int>& il) :Tree()
 	{
@@ -88,13 +88,13 @@ public:
 	{
 		return (double)sum(Root) / count(Root);
 	}
-	int depth() const
+	int depth()const
 	{
 		return depth(Root);
 	}
-	void depth_print(int depth, int iterval)const
+	void depth_print(int depth, int interval)const
 	{
-		depth_print(Root, depth, iterval);
+		depth_print(Root, depth, interval);
 		cout << endl;
 	}
 	void print()const
@@ -104,33 +104,31 @@ public:
 	}
 	void tree_print()const
 	{
-		tree_print(0, depth()*8);
+		tree_print(0, depth() * 8);
 	}
 private:
 	void balance(Element* Root)
 	{
 		if (Root == nullptr)return;
-		if (abs(count(Root->pLeft) - count(Root->pRight)) > 2)
+		//Г”ГіГ­ГЄГ¶ГЁГї abs() ГўГ®Г§ГўГ°Г Г№Г ГҐГІ Г ГЎГ±Г®Г«ГѕГІГ­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁ - Г¬Г®Г¤ГіГ«Гј Г·ГЁГ±Г«Г . 
+		if (abs(count(Root->pLeft) - count(Root->pRight)) < 2)return;
+		if (count(Root->pLeft) > count(Root->pRight))
 		{
-			if (count(Root->pLeft) > count(Root->pRight))
-			{
-				if (Root->pRight == nullptr)Root->pRight = new Element(Root->Data);
-				else insert(Root->Data, Root->pRight);
-				insert(Root->Data, Root->pRight);
-				Root->Data = maxValue(Root->pLeft);
-				erase(maxValue(Root->pLeft), Root->pLeft);
-			}
-			else
-			{
-				if (Root->pLeft == nullptr)Root->pLeft = new Element(Root->Data);
-				else insert(Root->Data, Root->pLeft);
-				insert(Root->Data, Root->pLeft);
-				Root->Data = maxValue(Root->pRight);
-				erase(maxValue(Root->pRight), Root->pRight);
-			}
+			if (Root->pRight == nullptr)Root->pRight = new Element(Root->Data);
+			else						insert(Root->Data, Root->pRight);
+			Root->Data = maxValue(Root->pLeft);
+			erase(maxValue(Root->pLeft), Root->pLeft);
+		}
+		if (count(Root->pLeft) < count(Root->pRight))
+		{
+			if (Root->pLeft == nullptr)	Root->pLeft = new Element(Root->Data);
+			else						insert(Root->Data, Root->pLeft);
+			Root->Data = minValue(Root->pRight);
+			erase(minValue(Root->pRight), Root->pRight);
 		}
 		balance(Root->pLeft);
 		balance(Root->pRight);
+		balance(Root);
 	}
 	void clear(Element*& Root)
 	{
@@ -160,9 +158,9 @@ private:
 		if (Root == nullptr)return;
 		if (Data == Root->Data)
 		{
-			if (Root->pLeft == Root->pRight)	//Проверяем, является ли удаляемый элеменет листком.
+			if (Root->pLeft == Root->pRight)	//ГЏГ°Г®ГўГҐГ°ГїГ¬, ГїГўГ«ГїГҐГІГ±Гї Г«ГЁ ГіГ¤Г Г«ГїГҐГ¬Г»Г© ГЅГ«ГҐГ¬ГҐГ­ГІ Г«ГЁГ±ГІГЄГ®Г¬
 			{
-				//И если элемент - листок (НЕ имеет потомков), удаляем его из памяти
+				//Г€ ГҐГ±Г«ГЁ ГЅГ«ГҐГ¬ГҐГ­ГІ - Г«ГЁГ±ГІГ®ГЄ (ГЌГ… ГЁГ¬ГҐГҐГІ ГЇГ®ГІГ®Г¬ГЄГ®Гў), ГіГ¤Г Г«ГїГҐГ¬ ГҐГЈГ® ГЁГ§ ГЇГ Г¬ГїГІГЁ
 				delete Root;
 				Root = nullptr;
 			}
@@ -171,7 +169,7 @@ private:
 				if (count(Root->pLeft) > count(Root->pRight))
 				{
 					Root->Data = maxValue(Root->pLeft);
-					erase(maxValue(Root->pLeft), Root->pRight);
+					erase(maxValue(Root->pLeft), Root->pLeft);
 				}
 				else
 				{
@@ -182,8 +180,8 @@ private:
 		}
 		if (Root)
 		{
-		if (Root->pLeft)erase(Data, Root->pLeft);
-		if (Root->pRight)erase(Data, Root->pRight);
+			if (Root->pLeft)erase(Data, Root->pLeft);
+			if (Root->pRight)erase(Data, Root->pRight);
 		}
 	}
 	int minValue(Element* Root)const
@@ -197,7 +195,7 @@ private:
 	{
 		if (this->Root == nullptr)return 0;
 		return Root->pRight == nullptr ? Root->Data : maxValue(Root->pRight);
-		/*if (Root->pRight == nullptr)return Root->Data;
+		/*if (Root->pRight == nullptr) return Root->Data;
 		else return maxValue(Root->pRight);*/
 	}
 	int sum(Element* Root)const
@@ -212,18 +210,16 @@ private:
 	}
 	int depth(Element* Root)const
 	{
-		//return Root == nullptr ? 0 : (depth(Root->pLeft) > depth(Root->pRight)) + depth(Root->pLeft) + depth(Root->pRight) + 1 + 1;
-		
 		if (Root == nullptr) return 0;
 		int lDepth = depth(Root->pLeft) + 1;
 		int rDepth = depth(Root->pRight) + 1;
-		return lDepth > lDepth ? lDepth : rDepth;
-		/*if (depth(Root->pLeft) > depth(Root->pRight)) return depth(Root->pLeft) + 1;
+		return lDepth > rDepth ? lDepth : rDepth;
+		/*if (depth(Root->pLeft) > depth(Root->pRight))return depth(Root->pLeft) + 1;
 		else return depth(Root->pRight) + 1;*/
 	}
-	void depth_print(Element* Root, int depth, int iterval = 8) const
+	void depth_print(Element* Root, int depth, int interval = 8)const
 	{
-		cout.width(iterval);
+		cout.width(interval);
 		if (Root == nullptr)
 		{
 			cout << "";
@@ -232,14 +228,12 @@ private:
 		if (depth == 0)
 		{
 			cout << Root->Data;
-			cout.width(iterval);
+			cout.width(interval);
 			cout << "";
 			return;
 		}
-		/*cout.width(iterval);
-		cout << "";*/
-		depth_print(Root->pLeft, depth - 1, iterval);
-		depth_print(Root->pRight, depth - 1, iterval);
+		depth_print(Root->pLeft, depth - 1, interval);
+		depth_print(Root->pRight, depth - 1, interval);
 	}
 	void print(Element* Root)const
 	{
@@ -248,18 +242,19 @@ private:
 		cout << Root->Data << "\t";
 		print(Root->pRight);
 	}
-	void tree_print(int depth, int iterval = 8)const
+	void tree_print(int depth, int interval = 8)const
 	{
 		if (depth == this->depth())return;
-		//int iterval = (this->depth() - depth) * 8;
-		depth_print(depth, iterval);
+		//int interval = (this->depth() - depth) * 8 + 1;
+		//cout.width(interval / 4);		cout << "";
+		depth_print(depth, interval);
 		cout << endl;
 		cout << endl;
 		cout << endl;
-		tree_print(depth + 1, iterval/2);
+		tree_print(depth + 1, interval / 2);
 	}
 };
-class UnigueTree:public Tree
+class UniqueTree :public Tree
 {
 	void insert(int Data, Element* Root)
 	{
@@ -270,7 +265,7 @@ class UnigueTree:public Tree
 			if (Root->pLeft == nullptr)Root->pLeft = new Element(Data);
 			else insert(Data, Root->pLeft);
 		}
-		else if(Data > Root->Data)
+		else if (Data > Root->Data)
 		{
 			if (Root->pRight == nullptr)Root->pRight = new Element(Data);
 			else insert(Data, Root->pRight);
@@ -284,23 +279,24 @@ public:
 };
 
 template<typename T>
-void measure(const char message[], T(Tree::*function)(/*Функция ничего не принимает*/)const, const Tree& tree)
-//				type (Class::*function_pointer)(parametres)modifiers
+void measure(const char message[], T(Tree::* function)		 (/*ГґГіГ­ГЄГ¶ГЁГї Г­ГЁГ·ГҐГЈГ® Г­ГҐ ГЇГ°ГЁГ­ГЁГ¬Г ГҐГІ*/)	const, const Tree& tree)
+//								   type (Class::*function_poiter)(parameters)						modifiers
 {
 	clock_t start = clock();
 	T result = (tree.*function)(/*parameters*/);
-	//		   (object.*function_pointer)(parameters);
+	//		   (object.*function_pointer)(parameters)
 	clock_t end = clock();
 	cout.width(48);
 	cout << std::left;
-	cout << message << result << "\t Вычеслено за " << double(end - start) / CLOCKS_PER_SEC << " секунд" << endl;
+	cout << message << result << "\t ГўГ»Г·ГЁГ±Г«ГҐГ­Г® Г§Г  "
+		<< double(end - start) / CLOCKS_PER_SEC << " Г±ГҐГЄГіГ­Г¤" << endl;
 }
 
 //#define BASE_CHECK
 //#define ERASE_CHECK
 //#define PERFORMANCE_CHECK
-//#define TREE_CHECK
 #define DEPTH_CHECK
+//#define TREE_PRINT
 
 void main()
 {
@@ -308,114 +304,113 @@ void main()
 
 #ifdef BASE_CHECK
 	int n;
-	cout << "Введите размер дерево: "; cin >> n;
+	cout << "Г‚ГўГҐГ¤ГЁГІГҐ Г°Г Г§Г¬ГҐГ° Г¤ГҐГ°ГҐГўГ : "; cin >> n;
 	Tree tree;
-	cout << "Минимальное значение в дереве: " << tree.minValue() << endl;
-	cout << "Максимальное значение в дереве: " << tree.maxValue() << endl;
+	cout << "ГЊГЁГ­ГЁГ¬Г Г«ГјГ­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ Гў Г¤ГҐГ°ГҐГўГҐ: " << tree.minValue() << endl;
+	cout << "ГЊГ ГЄГ±ГЁГ¬Г Г«ГјГ­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ Гў Г¤ГҐГ°ГҐГўГҐ: " << tree.maxValue() << endl;
 	for (int i = 0; i < n; i++)
 	{
 		tree.insert(rand() % 100);
 	}
 	tree.print();
 	cout << endl;
-	cout << "Минимальное значение в дереве: " << tree.minValue() << endl;
-	cout << "Максимальное значение в дереве: " << tree.maxValue() << endl;
-	cout << "Сумма элементов дерева: " << tree.sum() << endl;
-	cout << "Количество элементов дерева: " << tree.count() << endl;
-	cout << "Среднее-арифмитическое элементов дерева: " << tree.avg() << endl;
+	cout << "ГЊГЁГ­ГЁГ¬Г Г«ГјГ­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ Гў Г¤ГҐГ°ГҐГўГҐ: " << tree.minValue() << endl;
+	cout << "ГЊГ ГЄГ±ГЁГ¬Г Г«ГјГ­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ Гў Г¤ГҐГ°ГҐГўГҐ: " << tree.maxValue() << endl;
+	cout << "Г‘ГіГ¬Г¬Г  ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў Г¤ГҐГ°ГҐГўГ : " << tree.sum() << endl;
+	cout << "ГЉГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў Г¤ГҐГ°ГҐГўГ : " << tree.count() << endl;
+	cout << "Г‘Г°ГҐГ¤Г­ГҐГҐ-Г Г°ГЁГґГ¬ГҐГІГЁГ·ГҐГ±ГЄГ®ГҐ ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў Г¤ГҐГ°ГҐГўГ : " << tree.avg() << endl;
 
-	cout << delimiter;
-	cout << endl;
-
-	UnigueTree u_tree;
+	UniqueTree u_tree;
 	for (int i = 0; i < n; i++)
 	{
 		u_tree.insert(rand() % 100);
 	}
 	u_tree.print();
 	cout << endl;
-	cout << "Минимальное значение в дереве: " <<u_tree.minValue() << endl;
-	cout << "Максимальное значение в дереве: " <<u_tree.maxValue() << endl;
-	cout << "Сумма элементов дерева: " <<u_tree.sum() << endl;
-	cout << "Количество элементов дерева: " <<u_tree.count() << endl;
-	cout << "Среднее-арифмитическое элементов дерева: " << u_tree.avg() << endl;
+	cout << "ГЊГЁГ­ГЁГ¬Г Г«ГјГ­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ Гў Г¤ГҐГ°ГҐГўГҐ: " << u_tree.minValue() << endl;
+	cout << "ГЊГ ГЄГ±ГЁГ¬Г Г«ГјГ­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ Гў Г¤ГҐГ°ГҐГўГҐ: " << u_tree.maxValue() << endl;
+	cout << "Г‘ГіГ¬Г¬Г  ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў Г¤ГҐГ°ГҐГўГ : " << u_tree.sum() << endl;
+	cout << "ГЉГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў Г¤ГҐГ°ГҐГўГ : " << u_tree.count() << endl;
+	cout << "Г‘Г°ГҐГ¤Г­ГҐГҐ-Г Г°ГЁГґГ¬ГҐГІГЁГ·ГҐГ±ГЄГ®ГҐ ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў Г¤ГҐГ°ГҐГўГ : " << u_tree.avg() << endl;
 #endif // BASE_CHECK
 
 #ifdef ERASE_CHECK
-	Tree tree = 
-	{ 
-					50, 
+	Tree tree =
+	{
+					50,
 
-			25,				75, 
+			25,				75,
 
-		16,		32,		 64,   85, 91, 98 
+		16,		32,		64,		85, 91, 98
 	};
 	tree.print();
-	cout << "Глубина дерева: " << tree.depth() << endl;
+	cout << "ГѓГ«ГіГЎГЁГ­Г  Г¤ГҐГ°ГҐГўГ : " << tree.depth() << endl;
 	//tree.clear();
 	int value;
-	cout << "Введите удаляемое значение: "; cin >> value;
+	cout << "Г‚ГўГҐГ¤ГЁГІГҐ ГіГ¤Г Г«ГїГҐГ¬Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ: "; cin >> value;
 	tree.erase(value);
 	tree.print();
 #endif // ERASE_CHECK
 
 #ifdef PERFORMANCE_CHECK
-
 	clock_t start;
 	clock_t end;
 	int n;
-	cout << "Введите размер дерева: "; cin >> n;
+	cout << "Г‚ГўГҐГ¤ГЁГІГҐ Г°Г Г§Г¬ГҐГ° Г¤ГҐГ°ГҐГўГ : "; cin >> n;
 	Tree tree;
 	start = clock();
 	for (int i = 0; i < n; i++)
 	{
-		tree.insert(rand() % 1000);
+		tree.insert(rand()/* % 1000*/);
 	}
 	end = clock();
-	cout << "Дерево заполнено за " << double(end - start) / CLOCKS_PER_SEC << "секунд\n";
+	cout << "Г„ГҐГ°ГҐГўГ® Г§Г ГЇГ®Г«Г­ГҐГ­Г® Г§Г  " << double(end - start) / CLOCKS_PER_SEC << " Г±ГҐГЄГіГ­Г¤\n";
 	//tree.print();
-	measure("Минимальное значение в дереве: ", &(Tree::minValue), tree);
-	measure("Максимальное значение в дереве: ", &(Tree::maxValue), tree);
-	measure("Сумма элементов дерева: ", &(Tree::sum), tree);
-	measure("Количество элементов дерева: ", &(Tree::count), tree);
-	measure("глубина дерева: ", &(Tree::depth), tree);
-	measure("Среднее-арифмитическое элементов дерева: ", &(Tree::avg), tree);
-
-
-
+	measure("ГЊГЁГ­ГЁГ¬Г Г«ГјГ­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ Гў Г¤ГҐГ°ГҐГўГҐ: ", &(Tree::minValue), tree);
+	measure("ГЊГ ГЄГ±ГЁГ¬Г Г«ГјГ­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ Гў Г¤ГҐГ°ГҐГўГҐ: ", &(Tree::maxValue), tree);
+	measure("Г‘ГіГ¬Г¬Г  ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў Г¤ГҐГ°ГҐГўГ : ", &(Tree::sum), tree);
+	measure("ГЉГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў Г¤ГҐГ°ГҐГўГ : ", &(Tree::count), tree);
+	measure("Г‘Г°ГҐГ¤Г­ГҐГҐ-Г Г°ГЁГґГ¬ГҐГІГЁГ·ГҐГ±ГЄГ®ГҐ ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў Г¤ГҐГ°ГҐГўГ : ", &(Tree::avg), tree);
+	measure("ГѓГ«ГіГЎГЁГ­Г  Г¤ГҐГ°ГҐГўГ : ", &(Tree::depth), tree);
 	/*start = clock();
-	cout << "Минимальное значение в дереве:  " << double(end - start) / CLOCKS_PER_SEC << "секунд\n";
+	cout << "ГЊГЁГ­ГЁГ¬Г Г«ГјГ­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ Гў Г¤ГҐГ°ГҐГўГҐ: " << tree.minValue() << "\t";
 	end = clock();
-	cout << "Вычислено за  " << double(end - start) / CLOCKS_PER_SEC << "секунд\n";
+	cout << "ГўГ»Г·ГЁГ±Г«ГҐГ­Г® Г§Г  " << double(end - start) / CLOCKS_PER_SEC << " Г±ГҐГЄГіГ­Г¤.\n";
+
 	start = clock();
-	cout << "Максимальное значение в дереве: " << tree.minValue() << endl;
+	cout << "ГЊГ ГЄГ±ГЁГ¬Г Г«ГјГ­Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ Гў Г¤ГҐГ°ГҐГўГҐ: " << tree.maxValue() << "\t";
 	end = clock();
-	cout << "Вычислено за  " << double(end - start) / CLOCKS_PER_SEC << "секунд\n";
+	cout << "ГўГ»Г·ГЁГ±Г«ГҐГ­Г® Г§Г  " << double(end - start) / CLOCKS_PER_SEC << " Г±ГҐГЄГіГ­Г¤.\n";
+
 	start = clock();
-	cout << "Сумма элементов дерева: " << tree.sum() << endl;
+	cout << "Г‘ГіГ¬Г¬Г  ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў Г¤ГҐГ°ГҐГўГ : " << tree.sum() << "\t";
 	end = clock();
-	cout << "Вычислено за  " << double(end - start) / CLOCKS_PER_SEC << "секунд\n";
+	cout << "ГўГ»Г·ГЁГ±Г«ГҐГ­Г® Г§Г  " << double(end - start) / CLOCKS_PER_SEC << " Г±ГҐГЄГіГ­Г¤.\n";
+
 	start = clock();
-	cout << "Количество элементов дерева: " << tree.count() << endl;
+	cout << "ГЉГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў Г¤ГҐГ°ГҐГўГ : " << tree.count() << "\t";
 	end = clock();
-	cout << "Вычислено за  " << double(end - start) / CLOCKS_PER_SEC << "секунд\n";
+	cout << "ГўГ»Г·ГЁГ±Г«ГҐГ­Г® Г§Г  " << double(end - start) / CLOCKS_PER_SEC << " Г±ГҐГЄГіГ­Г¤.\n";
+
 	start = clock();
-	cout << "Среднее-арифмитическое элементов дерева: " << tree.avg() << endl;
+	cout << "Г‘Г°ГҐГ¤Г­ГҐГҐ-Г Г°ГЁГґГ¬ГҐГІГЁГ·ГҐГ±ГЄГ®ГҐ ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў Г¤ГҐГ°ГҐГўГ : " << tree.avg() << "\t";
 	end = clock();
-	cout << "Вычислено за  " << double(end - start) / CLOCKS_PER_SEC << "секунд\n";
+	cout << "ГўГ»Г·ГЁГ±Г«ГҐГ­Г® Г§Г  " << double(end - start) / CLOCKS_PER_SEC << " Г±ГҐГЄГіГ­Г¤.\n";
+
 	start = clock();
-	cout << "глубина дерева: " << tree.depth() << endl;
+	cout << "ГѓГ«ГіГЎГЁГ­Г  Г¤ГҐГ°ГҐГўГ : " << tree.depth() << "\t";
 	end = clock();
-	cout << "Вычислено за  " << double(end - start) / CLOCKS_PER_SEC << "секунд\n";
-	int value;
-	cout << "Введите удаляемое значение: "; cin >> value;
+	cout << "ГўГ»Г·ГЁГ±Г«ГҐГ­Г® Г§Г  " << double(end - start) / CLOCKS_PER_SEC << " Г±ГҐГЄГіГ­Г¤.\n";*/
+
+
+
+	/*int value;
+	cout << "Г‚ГўГҐГ¤ГЁГІГҐ ГіГ¤Г Г«ГїГҐГ¬Г®ГҐ Г§Г­Г Г·ГҐГ­ГЁГҐ: "; cin >> value;
 	tree.erase(value);
 	tree.print();*/
-
 #endif // PERFORMANCE_CHECK
 
-#ifdef TREE_CHECK
-
+#ifdef TREE_PRINT
 	Tree tree =
 	{
 					50,
@@ -424,12 +419,16 @@ void main()
 
 		16,		32,		64,		85, 91//, 98
 	};
-	//tree.depth_print(2);
+	//tree.depth_print(55);
 	tree.tree_print();
-#endif // TREE_CHECK
+#endif // TREE_PRINT
 
-	Tree tree = { 55, 34, 21, 13, 8, 5, 2 };
+	Tree tree = { 55, 34, 21, 13, 8, 5, 3 };
+	//Tree tree = { 3, 5, 8, 13, 21, 34, 55 };
+	//Tree tree = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 15, 16, 17, 18, 21, 34, 55 };
+	//Tree tree = { 16,25,32,50,58,75,85 };
 	tree.tree_print();
 	tree.balance();
 	tree.tree_print();
+
 }
